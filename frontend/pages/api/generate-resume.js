@@ -10,10 +10,15 @@ export default async function handler(req, res) {
     // Connect to MongoDB
     const db = await getDB();
 
+    if (!db) {
+      console.error('Database connection failed');
+      return res.status(500).json({ error: 'Database connection failed' });
+    }
+
     // Save user data
+    const userCollection = db.collection('users');
     const userData = req.body;
-    const user = new User(userData);
-    await user.save();
+    await userCollection.insertOne(userData);
 
     // Generate resume using Gemini AI
     const resumeContent = await generateResume(userData);
