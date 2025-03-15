@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
   },
 });
 
-//test commit
 
 export const ResumePDF = ({ userData }) => {
   // Helper function to check if section has data
