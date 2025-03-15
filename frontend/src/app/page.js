@@ -18,23 +18,37 @@ import CoverLetterForm from './components/CoverLetterForm';
 import DocumentPreview from './components/DocumentPreview';
 
 const CoverLetterSkeleton = () => (
-  <Stack spacing={6}>
+  <Stack spacing={8} maxW="4xl" mx="auto">
     {/* Resume Preview Skeleton */}
-    <Box className="mb-12">
-      <Skeleton height="20px" width="200px" mb={4} />
+    <Box p={6} bg="white" rounded="lg" shadow="md">
+      <Skeleton height="28px" width="200px" mb={4} />
       <Stack spacing={4}>
-        <Skeleton height="400px" />
-        <Skeleton height="40px" width="150px" />
+        <Skeleton height="300px" />
+        <Box display="flex" justifyContent="flex-end">
+          <Skeleton height="40px" width="120px" />
+        </Box>
       </Stack>
     </Box>
 
     {/* Cover Letter Form Skeleton */}
-    <Box className="mt-12">
-      <Skeleton height="24px" width="300px" mb={6} />
+    <Box p={6} bg="white" rounded="lg" shadow="md">
       <Stack spacing={6}>
-        <Skeleton height="80px" />
-        <Skeleton height="80px" />
-        <Skeleton height="48px" width="200px" />
+        <Skeleton height="24px" width="250px" />
+        
+        {/* Job Title Field */}
+        <Box>
+          <Skeleton height="20px" width="100px" mb={2} />
+          <Skeleton height="40px" />
+        </Box>
+
+        {/* Company Name Field */}
+        <Box>
+          <Skeleton height="20px" width="120px" mb={2} />
+          <Skeleton height="40px" />
+        </Box>
+
+        {/* Submit Button */}
+        <Skeleton height="48px" width="100%" maxW="200px" />
       </Stack>
     </Box>
   </Stack>
@@ -76,6 +90,7 @@ export default function Home() {
         isClosable: true,
       });
     } catch (error) {
+      setActiveTab(0);
       console.error('Error generating resume:', error);
       toast({
         title: 'Error',
@@ -104,7 +119,7 @@ export default function Home() {
 
       const data = await response.json();
       setCoverLetterContent(data.content);
-      setActiveTab(2);
+      setActiveTab(2); //Note: make change to work with skeleton
 
       toast({
         title: 'Cover letter generated!',
@@ -184,6 +199,7 @@ export default function Home() {
                     content={resumeContent}
                     title='Your Resume'
                     onDownload={downloadResume}
+                    userData={userData}
                   />
 
                   <Box className='mt-12'>
