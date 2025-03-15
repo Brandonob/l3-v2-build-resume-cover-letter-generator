@@ -1,65 +1,45 @@
 import { MongoClient } from 'mongodb';
 
-const { MONGODB_DB, MONGODB_URI } = process.env;
+const { MONGODB_URI, MONGODB_DB } = process.env;
 
 if (!MONGODB_URI || !MONGODB_DB) {
-  throw new Error('MONGO URI OR DB Not Found!');
+  throw new Error('Please define the MONGODB_URI and MONGODB_DB environment variables');
 }
+console.log('>>>>>MONGODB_URI<<<<<', MONGODB_URI);
+console.log('>>>>>MONGODB_DB<<<<<', MONGODB_DB);
 
-console.log('>>>>>>>MONGO DB URI<<<<<<<<', MONGODB_URI);
-console.log('>>>>>>>MONGO DB DB<<<<<<<<', MONGODB_DB);
 
-export async function connectToDB() {
+
+async function connectToDatabase() {
   try {
     const client = await MongoClient.connect(MONGODB_URI);
+    const db = client.db(MONGODB_DB);
 
-    return client;
+    return db;
   } catch (error) {
-    console.error('MongoDB connection error:', error);
+    console.error('MongoDB connection error:', {
+      name: error.name,
+      message: error.message,
+      code: error.code,
+      codeName: error.codeName
+    });
+    throw error;
   }
 }
 
-export async function getDB() {
-  try {
-    const client = await connectToDB();
+export default connectToDatabase;
 
-    return client.db(MONGODB_DB);
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-  }
-}
+// Use the same URI from your .env.local
 
-// import mongoose from 'mongoose';
-
-// const MONGODB_URI = process.env.MONGODB_URI;
-
-// if (!MONGODB_URI) {
-//   throw new Error('Please define the MONGODB_URI environment variable');
-// }
-
-// let cached = global.mongoose;
-
-// if (!cached) {
-//   cached = global.mongoose = { conn: null, promise: null };
-// }
-
-// async function connectToDatabase() {
-//   if (cached.conn) {
-//     return cached.conn;
+// async function testConnection() {
+//   try {
+//     await MongoClient.connect(MONGODB_URI);
+//     console.log('Connected successfully!');
+//     await MongoClient.close();
+//     console.log('Disconnected successfully!');
+//   } catch (error) {
+//     console.error('Connection test failed:', error);
 //   }
-
-//   if (!cached.promise) {
-//     const opts = {
-//       bufferCommands: false,
-//     };
-
-//     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-//       return mongoose;
-//     });
-//   }
-
-//   cached.conn = await cached.promise;
-//   return cached.conn;
 // }
 
-// export default connectToDatabase;
+// testConnection();

@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export async function generateResume(userData) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `
     Create a professional resume based on the following information:
@@ -58,11 +58,15 @@ export async function generateResume(userData) {
 }
 
 export async function generateCoverLetter(userData, jobTitle, companyName) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  if (!userData?.personalInfo) {
+    throw new Error('Invalid user data: personalInfo is required');
+  }
+
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `
     Create a professional cover letter for ${
-      userData.personalInfo.name
+      userData.personalInfo.name || '[Name not provided]'
     } applying for the position of ${jobTitle} at ${companyName}.
     
     Use the following information:

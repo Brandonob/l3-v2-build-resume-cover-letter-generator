@@ -40,7 +40,14 @@ export default function CoverLetterForm({ onSubmit, userData }) {
       return;
     }
 
-    onSubmit(userData, formData.jobTitle, formData.companyName);
+    // Combine the form data with userData
+    const combinedData = {
+      ...userData,
+      jobTitle: formData.jobTitle,
+      companyName: formData.companyName
+    };
+
+    onSubmit(combinedData);
   };
 
   return (

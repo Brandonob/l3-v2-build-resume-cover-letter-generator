@@ -61,18 +61,14 @@ export default function Home() {
     }
   };
 
-  const handleCoverLetterFormSubmit = async (
-    userData,
-    jobTitle,
-    companyName
-  ) => {
+  const handleCoverLetterFormSubmit = async (combinedData) => {
     try {
       const response = await fetch('/api/generate-cover-letter', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userData, jobTitle, companyName }),
+        body: JSON.stringify(combinedData),
       });
 
       if (!response.ok) {
