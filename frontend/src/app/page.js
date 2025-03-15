@@ -10,10 +10,35 @@ import {
   Tab,
   TabPanel,
   useToast,
+  Skeleton,
+  Stack,
 } from '@chakra-ui/react';
 import ResumeForm from './components/ResumeForm';
 import CoverLetterForm from './components/CoverLetterForm';
 import DocumentPreview from './components/DocumentPreview';
+
+const CoverLetterSkeleton = () => (
+  <Stack spacing={6}>
+    {/* Resume Preview Skeleton */}
+    <Box className="mb-12">
+      <Skeleton height="20px" width="200px" mb={4} />
+      <Stack spacing={4}>
+        <Skeleton height="400px" />
+        <Skeleton height="40px" width="150px" />
+      </Stack>
+    </Box>
+
+    {/* Cover Letter Form Skeleton */}
+    <Box className="mt-12">
+      <Skeleton height="24px" width="300px" mb={6} />
+      <Stack spacing={6}>
+        <Skeleton height="80px" />
+        <Skeleton height="80px" />
+        <Skeleton height="48px" width="200px" />
+      </Stack>
+    </Box>
+  </Stack>
+);
 
 export default function Home() {
   const toast = useToast();
@@ -21,9 +46,11 @@ export default function Home() {
   const [resumeContent, setResumeContent] = useState('');
   const [coverLetterContent, setCoverLetterContent] = useState('');
   const [activeTab, setActiveTab] = useState(0);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleResumeFormSubmit = async (formData) => {
     try {
+      setActiveTab(1);
       setUserData(formData);
 
       const response = await fetch('/api/generate-resume', {
@@ -40,7 +67,6 @@ export default function Home() {
 
       const data = await response.json();
       setResumeContent(data.content);
-      setActiveTab(1);
 
       toast({
         title: 'Resume generated!',
@@ -63,6 +89,7 @@ export default function Home() {
 
   const handleCoverLetterFormSubmit = async (combinedData) => {
     try {
+      setIsGenerating(true);
       const response = await fetch('/api/generate-cover-letter', {
         method: 'POST',
         headers: {
@@ -95,6 +122,8 @@ export default function Home() {
         duration: 5000,
         isClosable: true,
       });
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -147,7 +176,9 @@ export default function Home() {
               <ResumeForm onSubmit={handleResumeFormSubmit} />
             </TabPanel>
             <TabPanel>
-              {resumeContent && (
+              {isGenerating ? (
+                <CoverLetterSkeleton />
+              ) : resumeContent ? (
                 <>
                   <DocumentPreview
                     content={resumeContent}
@@ -165,6 +196,8 @@ export default function Home() {
                     />
                   </Box>
                 </>
+              ) : (
+                <CoverLetterSkeleton />
               )}
             </TabPanel>
 
